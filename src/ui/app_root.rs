@@ -1,6 +1,6 @@
 use crate::{
     state::AppState,
-    ui::{app_statusbar::AppStatusbar, app_titlebar::AppTitlebar, app_welcome::AppWelcome},
+    ui::{app_titlebar::AppTitlebar, app_welcome::AppWelcome},
 };
 use gpui_kit::{
     App, AppContext, Context, Entity, ParentElement, Render, Styled, Window,
@@ -47,6 +47,5 @@ impl Render for AppRoot {
                         ),
                 )
             })
-            .child(AppStatusbar)
     }
 }
