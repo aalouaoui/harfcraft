@@ -8,7 +8,7 @@ use gpui_kit::{
     },
 };
 
-use crate::APP_NAME;
+use crate::{APP_NAME, state::AppState};
 
 #[derive(IntoElement)]
 pub struct AppTitlebar;
@@ -42,6 +42,8 @@ impl RenderOnce for AppTitlebar {
                                     Some(window),
                                     cx,
                                 );
+                                let theme = cx.theme().theme_name().to_string();
+                                AppState::global_mut(cx).config.change_theme(theme);
                             }),
                     ),
                 ),

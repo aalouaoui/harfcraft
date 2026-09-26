@@ -1,6 +1,6 @@
 use gpui_kit::{
-    AppContext, WindowOptions,
-    component::{Root, Theme, ThemeMode, TitleBar},
+    AppContext, SharedString, WindowOptions,
+    component::{Root, Theme, ThemeRegistry, TitleBar},
 };
 use harfcraft::{APP_ID, APP_NAME, state::AppState, ui::app_root::AppRoot};
 
@@ -11,9 +11,11 @@ fn main() {
             gpui_kit::init(cx);
 
             let state = AppState::new();
+            let theme_name = SharedString::from(&state.config.active_theme);
+            if let Some(theme) = ThemeRegistry::global(cx).themes().get(&theme_name).cloned() {
+                Theme::global_mut(cx).apply_config(&theme);
+            }
             cx.set_global(state);
-
-            Theme::change(ThemeMode::Dark, None, cx);
 
             cx.set_app_identity(APP_ID, APP_NAME);
             cx.activate(true);
