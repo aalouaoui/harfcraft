@@ -1,5 +1,7 @@
 use crate::config::AppConfig;
-use gpui_kit::{App, BorrowAppContext, Global, PathPromptOptions, SharedString};
+use gpui_kit::{
+    App, AppContext, BorrowAppContext, Entity, Global, PathPromptOptions, SharedString,
+};
 use std::path::PathBuf;
 
 pub struct Workspace {
@@ -8,25 +10,27 @@ pub struct Workspace {
 }
 
 impl Workspace {
-    pub fn new(root_path: PathBuf) -> Self {
-        let name = root_path.file_name().unwrap().to_string_lossy().into();
-        Self { root_path, name }
+    pub fn new(root_path: PathBuf, cx: &mut App) -> Entity<Self> {
+        cx.new(|_| {
+            let name = root_path.file_name().unwrap().to_string_lossy().into();
+            Self { root_path, name }
+        })
     }
 }
 
 pub struct AppState {
     pub config: AppConfig,
-    pub workspace: Option<Workspace>,
+    pub workspace: Option<Entity<Workspace>>,
 }
 
 impl Global for AppState {}
 
 impl AppState {
-    pub fn new() -> Self {
+    pub fn new(cx: &mut App) -> Self {
         let config = AppConfig::load();
         let root_path = config.last_open_project.clone();
         Self {
-            workspace: root_path.map(|root_path| Workspace::new(root_path)),
+            workspace: root_path.map(|root_path| Workspace::new(root_path, cx)),
             config,
         }
     }
@@ -39,8 +43,8 @@ impl AppState {
         cx.global_mut()
     }
 
-    pub fn open_project(&mut self, root_path: PathBuf) {
-        let workspace = Workspace::new(root_path.clone());
+    pub fn open_project(&mut self, root_path: PathBuf, cx: &mut App) {
+        let workspace = Workspace::new(root_path.clone(), cx);
         self.workspace = Some(workspace);
         self.config.open_project(root_path);
     }
@@ -54,8 +58,8 @@ impl AppState {
         });
         cx.spawn(async move |app| {
             let root_path = prompt.await.ok()?.ok()??.first()?.clone();
-            app.update_global::<AppState, _>(|state, _| {
-                state.open_project(root_path);
+            app.update_global::<AppState, _>(|state, cx| {
+                state.open_project(root_path, cx);
             });
             Some(())
         })

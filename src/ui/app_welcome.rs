@@ -81,8 +81,8 @@ impl Render for AppWelcome {
                                     .child(Label::new(name)),
                             )
                             .on_click(move |_, _, cx| {
-                                cx.update_global::<AppState, _>(|state, _| {
-                                    state.open_project(p.clone());
+                                cx.update_global::<AppState, _>(|state, cx| {
+                                    state.open_project(p.clone(), cx);
                                 });
                             })
                     })),

@@ -10,7 +10,7 @@ fn main() {
         .run(move |cx| {
             gpui_kit::init(cx);
 
-            let state = AppState::new();
+            let state = AppState::new(cx);
             let theme_name = SharedString::from(&state.config.active_theme);
             if let Some(theme) = ThemeRegistry::global(cx).themes().get(&theme_name).cloned() {
                 Theme::global_mut(cx).apply_config(&theme);

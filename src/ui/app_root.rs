@@ -31,13 +31,14 @@ impl Render for AppRoot {
                 this.child(self.welcome_screen.clone())
             })
             .when_some(state.workspace.as_ref(), |this, ws| {
+                let workspace = ws.read(cx);
                 this.child(
                     v_flex()
                         .size_full()
                         .justify_center()
                         .items_center()
                         .gap_2()
-                        .child(ws.root_path.display().to_string())
+                        .child(workspace.root_path.display().to_string())
                         .child(
                             Button::new("close-workspace")
                                 .child("Close Workspace")
