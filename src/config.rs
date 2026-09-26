@@ -5,6 +5,7 @@ use std::{
     path::PathBuf,
 };
 pub const DEFAULT_THEME: &str = "Default Dark";
+pub const RECENT_PROJECTS_LIMIT: usize = 100;
 
 #[derive(Serialize, Deserialize)]
 pub struct AppConfig {
@@ -59,11 +60,7 @@ impl AppConfig {
         self.last_open_project = Some(path.clone());
         self.recent_projects.retain(|p| p != &path);
         self.recent_projects.insert(0, path);
-
-        if self.recent_projects.len() > 10 {
-            self.recent_projects.truncate(10);
-        }
-
+        self.recent_projects.truncate(RECENT_PROJECTS_LIMIT);
         self.save();
     }
 
