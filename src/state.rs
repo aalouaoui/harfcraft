@@ -1,7 +1,6 @@
+use crate::config::AppConfig;
 use gpui_kit::{App, BorrowAppContext, Global, PathPromptOptions, SharedString};
 use std::path::PathBuf;
-
-use crate::config::AppConfig;
 
 pub struct Workspace {
     pub name: SharedString,
@@ -40,7 +39,13 @@ impl AppState {
         cx.global_mut()
     }
 
-    pub fn open_workspace(cx: &mut App) {
+    pub fn open_project(&mut self, root_path: PathBuf) {
+        let workspace = Workspace::new(root_path.clone());
+        self.workspace = Some(workspace);
+        self.config.open_project(root_path);
+    }
+
+    pub fn open_workspace_picker(cx: &mut App) {
         let prompt = cx.prompt_for_paths(PathPromptOptions {
             files: false,
             directories: true,
@@ -49,10 +54,8 @@ impl AppState {
         });
         cx.spawn(async move |app| {
             let root_path = prompt.await.ok()?.ok()??.first()?.clone();
-            let workspace = Workspace::new(root_path.clone());
             app.update_global::<AppState, _>(|state, _| {
-                state.workspace = Some(workspace);
-                state.config.open_project(root_path);
+                state.open_project(root_path);
             });
             Some(())
         })

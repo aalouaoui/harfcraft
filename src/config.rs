@@ -5,7 +5,7 @@ use std::{
     path::PathBuf,
 };
 pub const DEFAULT_THEME: &str = "Default Dark";
-pub const RECENT_PROJECTS_LIMIT: usize = 100;
+pub const RECENT_PROJECTS_LIMIT: usize = 10;
 
 #[derive(Serialize, Deserialize)]
 pub struct AppConfig {
