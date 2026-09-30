@@ -1,9 +1,14 @@
-use crate::state::Workspace;
+use crate::state::{AppState, Workspace};
 use gpui_kit::{
-    App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, ParentElement, Render, Styled,
-    Window,
+    App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, MenuItem, ParentElement, Render,
+    Styled, Window,
     base::{TreeEntry, TreeItem, TreeState, dock::PanelEvent, h_flex},
-    component::{Icon, IconName, list::ListItem, tree::tree},
+    component::{
+        Icon, IconName,
+        list::ListItem,
+        menu::{PopupMenu, PopupMenuItem},
+        tree::tree,
+    },
     div,
     prelude::{Context, IntoElement},
     px,
@@ -19,8 +24,8 @@ impl ExplorerPanel {
         cx.new(|cx| {
             let tree_state = cx.new(|cx| {
                 let workspace = workspace.read(cx);
-                let name = workspace.name.clone();
-                TreeState::new(cx).items(vec![TreeItem::new(name.clone(), name.clone())])
+                let tree_item = TreeItem::from(workspace.file_tree.read(cx));
+                TreeState::new(cx).items(vec![tree_item])
             });
             Self {
                 tree_state,
@@ -56,6 +61,17 @@ impl gpui_kit::component::dock::Panel for ExplorerPanel {
             .gap_2()
             .child(Icon::new(IconName::Folder))
             .child("Files")
+    }
+    fn dropdown_menu(
+        &mut self,
+        menu: PopupMenu,
+        _: &mut Window,
+        _: &mut Context<Self>,
+    ) -> PopupMenu {
+        // TODO: Use actions
+        menu.item(PopupMenuItem::new("Close project").on_click(|_, _, cx| {
+            AppState::close_workspace(cx);
+        }))
     }
 }
 

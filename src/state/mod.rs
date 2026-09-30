@@ -1,22 +1,11 @@
+pub mod workspace;
+pub use workspace::Workspace;
+
+pub mod file_tree;
+
 use crate::config::AppConfig;
-use gpui_kit::{
-    App, AppContext, BorrowAppContext, Entity, Global, PathPromptOptions, SharedString,
-};
+use gpui_kit::{App, BorrowAppContext, Entity, Global, PathPromptOptions};
 use std::path::PathBuf;
-
-pub struct Workspace {
-    pub name: SharedString,
-    pub root_path: PathBuf,
-}
-
-impl Workspace {
-    pub fn new(root_path: PathBuf, cx: &mut App) -> Entity<Self> {
-        cx.new(|_| {
-            let name = root_path.file_name().unwrap().to_string_lossy().into();
-            Self { root_path, name }
-        })
-    }
-}
 
 pub struct AppState {
     pub config: AppConfig,
