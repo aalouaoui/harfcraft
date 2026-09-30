@@ -1,52 +1,42 @@
 use crate::{
     state::AppState,
-    ui::{app_titlebar::AppTitlebar, app_welcome::AppWelcome},
+    ui::{app_titlebar::AppTitlebar, app_welcome::AppWelcome, workspace_view::WorkspaceView},
 };
 use gpui_kit::{
-    App, AppContext, Context, Entity, ParentElement, Render, Styled, Window,
+    App, AppContext, Context, Entity, ParentElement, Render, Styled, Subscription, Window,
     base::v_flex,
-    component::button::Button,
     prelude::{FluentBuilder, IntoElement},
 };
 
 pub struct AppRoot {
     welcome_screen: Entity<AppWelcome>,
+    workspace_view: Option<Entity<WorkspaceView>>,
+    _subscriptions: Vec<Subscription>,
 }
 
 impl AppRoot {
-    pub fn new(_window: &mut Window, cx: &mut App) -> Entity<Self> {
+    pub fn new(window: &mut Window, cx: &mut App) -> Entity<Self> {
         cx.new(|cx| Self {
             welcome_screen: AppWelcome::new(cx),
+            workspace_view: WorkspaceView::new(window, cx),
+            _subscriptions: vec![cx.observe_global_in::<AppState>(
+                &window,
+                |this: &mut Self, window, cx| {
+                    this.workspace_view = WorkspaceView::new(window, cx);
+                },
+            )],
         })
     }
 }
 
 impl Render for AppRoot {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let state = AppState::global(cx);
+    fn render(&mut self, _window: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
         v_flex()
             .size_full()
             .child(AppTitlebar)
-            .when_none(&state.workspace, |this| {
+            .when_none(&self.workspace_view, |this| {
                 this.child(self.welcome_screen.clone())
             })
-            .when_some(state.workspace.as_ref(), |this, ws| {
-                let workspace = ws.read(cx);
-                this.child(
-                    v_flex()
-                        .size_full()
-                        .justify_center()
-                        .items_center()
-                        .gap_2()
-                        .child(workspace.root_path.display().to_string())
-                        .child(
-                            Button::new("close-workspace")
-                                .child("Close Workspace")
-                                .on_click(|_, _, cx| {
-                                    AppState::close_workspace(cx);
-                                }),
-                        ),
-                )
-            })
+            .when_some(self.workspace_view.clone(), |this, view| this.child(view))
     }
 }
