@@ -2,13 +2,14 @@ use gpui_kit::{
     AppContext, SharedString, WindowOptions,
     component::{Root, Theme, ThemeRegistry, TitleBar},
 };
-use harfcraft::{APP_ID, APP_NAME, state::AppState, ui::app_root::AppRoot};
+use harfcraft::{APP_ID, APP_NAME, actions, state::AppState, ui::app_root::AppRoot};
 
 fn main() {
     gpui_kit::application()
         .with_assets(gpui_kit::assets::AllAssets)
         .run(move |cx| {
             gpui_kit::init(cx);
+            actions::init(cx);
 
             let state = AppState::new(cx);
             let theme_name = SharedString::from(&state.config.active_theme);

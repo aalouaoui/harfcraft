@@ -1,9 +1,9 @@
 use std::path;
 
-use crate::{APP_DESCRIPTION, APP_NAME, state::AppState};
+use crate::{APP_DESCRIPTION, APP_NAME, actions::OpenProject, state::AppState};
 use gpui_kit::{
-    App, AppContext, BorrowAppContext, Entity, FontWeight, ParentElement, Render, SharedString,
-    Styled, Window,
+    Action, App, AppContext, BorrowAppContext, Entity, FontWeight, ParentElement, Render,
+    SharedString, Styled, Window,
     assets::IconName,
     base::{h_flex, v_flex},
     component::{
@@ -46,8 +46,8 @@ impl Render for AppWelcome {
                         .ghost()
                         .label("Open Project")
                         .icon(IconName::FolderOpen)
-                        .on_click(|_, _, cx| {
-                            AppState::open_workspace_picker(cx);
+                        .on_click(|_, window, cx| {
+                            window.dispatch_action(OpenProject.boxed_clone(), cx);
                         }),
                 ),
             )

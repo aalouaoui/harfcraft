@@ -1,14 +1,18 @@
+use crate::{
+    APP_NAME,
+    actions::{CloseProject, OpenProject},
+    state::AppState,
+};
 use gpui_kit::{
-    App, AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
+    Action, App, AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
     assets::IconName,
     base::h_flex,
     component::{
         ActiveTheme, Sizable, Theme, ThemeMode, TitleBar,
         button::{Button, ButtonVariants},
+        menu::DropdownMenu,
     },
 };
-
-use crate::{APP_NAME, state::AppState};
 
 pub struct AppTitlebar;
 
@@ -28,7 +32,20 @@ impl Render for AppTitlebar {
                 .child(
                     h_flex()
                         .gap_2()
-                        .child(Button::new("menu").small().ghost().icon(IconName::Menu))
+                        .child(
+                            Button::new("menu")
+                                .small()
+                                .ghost()
+                                .icon(IconName::Menu)
+                                .dropdown_menu(|menu, _, cx| {
+                                    menu.menu("Open Project", OpenProject.boxed_clone())
+                                        .menu_with_disabled(
+                                            "Close Project",
+                                            CloseProject.boxed_clone(),
+                                            AppState::global(cx).workspace.is_none(),
+                                        )
+                                }),
+                        )
                         .child(APP_NAME),
                 )
                 .child(
