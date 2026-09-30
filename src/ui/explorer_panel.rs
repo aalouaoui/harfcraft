@@ -1,7 +1,7 @@
 use crate::state::{AppState, Workspace};
 use gpui_kit::{
-    App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, MenuItem, ParentElement, Render,
-    Styled, Window,
+    App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, ParentElement, Render, Styled,
+    Window,
     base::{TreeEntry, TreeItem, TreeState, dock::PanelEvent, h_flex},
     component::{
         Icon, IconName,
