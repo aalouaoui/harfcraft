@@ -1,4 +1,4 @@
-use crate::state::{AppState, Workspace};
+use crate::state::{AppState, workspace::Workspace};
 use gpui_kit::{
     App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, ParentElement, Render, Styled,
     Window,

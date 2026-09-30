@@ -1,9 +1,7 @@
-pub mod workspace;
-pub use workspace::Workspace;
-
 pub mod file_tree;
+pub mod workspace;
 
-use crate::config::AppConfig;
+use crate::{config::AppConfig, state::workspace::Workspace};
 use gpui_kit::{App, BorrowAppContext, Entity, Global, PathPromptOptions};
 use std::path::PathBuf;
 

@@ -1,6 +1,5 @@
-use std::{fs, path::PathBuf};
-
 use gpui_kit::base::TreeItem;
+use std::{fs, path::PathBuf};
 
 #[derive(Clone)]
 pub struct FileTreeNode {
