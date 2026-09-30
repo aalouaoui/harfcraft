@@ -13,6 +13,8 @@ fn main() {
             let state = AppState::new(cx);
             let theme_name = SharedString::from(&state.config.active_theme);
             if let Some(theme) = ThemeRegistry::global(cx).themes().get(&theme_name).cloned() {
+                // Keep this so that dock area separator does not appear white
+                Theme::change(theme.mode, None, cx);
                 Theme::global_mut(cx).apply_config(&theme);
             }
             cx.set_global(state);
