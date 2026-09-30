@@ -1,5 +1,5 @@
 use gpui_kit::{
-    App, IntoElement, ParentElement, RenderOnce, Styled, Window,
+    App, AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
     assets::IconName,
     base::h_flex,
     component::{
@@ -10,11 +10,16 @@ use gpui_kit::{
 
 use crate::{APP_NAME, state::AppState};
 
-#[derive(IntoElement)]
 pub struct AppTitlebar;
 
-impl RenderOnce for AppTitlebar {
-    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
+impl AppTitlebar {
+    pub fn new(cx: &mut App) -> Entity<Self> {
+        cx.new(|_| AppTitlebar)
+    }
+}
+
+impl Render for AppTitlebar {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         TitleBar::new().child(
             h_flex()
                 .justify_between()

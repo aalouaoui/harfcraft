@@ -9,6 +9,7 @@ use gpui_kit::{
 };
 
 pub struct AppRoot {
+    title_bar: Entity<AppTitlebar>,
     welcome_screen: Entity<AppWelcome>,
     workspace_view: Option<Entity<WorkspaceView>>,
     _subscriptions: Vec<Subscription>,
@@ -17,6 +18,7 @@ pub struct AppRoot {
 impl AppRoot {
     pub fn new(window: &mut Window, cx: &mut App) -> Entity<Self> {
         cx.new(|cx| Self {
+            title_bar: AppTitlebar::new(cx),
             welcome_screen: AppWelcome::new(cx),
             workspace_view: WorkspaceView::new(window, cx),
             _subscriptions: vec![cx.observe_global_in::<AppState>(
@@ -33,7 +35,7 @@ impl Render for AppRoot {
     fn render(&mut self, _window: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
         v_flex()
             .size_full()
-            .child(AppTitlebar)
+            .child(self.title_bar.clone())
             .when_none(&self.workspace_view, |this| {
                 this.child(self.welcome_screen.clone())
             })
