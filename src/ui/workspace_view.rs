@@ -5,7 +5,7 @@ use crate::{
 use gpui_kit::{
     App, AppContext, Entity, ParentElement, Render, Styled, Window,
     base::dock::{DockArea, DockLayout, DockPlacement},
-    component::dock::{DockSkin, PanelStyle},
+    component::dock::{DockSkin, PanelStyle, panel_handle},
     div,
     prelude::{Context, IntoElement},
 };
@@ -24,10 +24,14 @@ impl WorkspaceView {
             cx.new(|cx| {
                 let (dock_area, skin) = DockSkin::dock_area("workspace-view", None, window, cx);
                 dock_area.update(cx, |area, cx| {
-                    area.set_center(DockLayout::tabs().panel(editor), window, cx);
+                    area.set_center(
+                        DockLayout::tabs().panel_view(panel_handle(editor), cx),
+                        window,
+                        cx,
+                    );
                     area.set_dock(
                         DockPlacement::Left,
-                        DockLayout::tabs().panel(explorer),
+                        DockLayout::tabs().panel_view(panel_handle(explorer), cx),
                         window,
                         cx,
                     );

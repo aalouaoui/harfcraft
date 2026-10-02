@@ -1,17 +1,11 @@
-use crate::state::{AppState, workspace::Workspace};
+use crate::state::workspace::Workspace;
 use gpui_kit::{
     App, AppContext, Entity, EventEmitter, FocusHandle, Focusable, ParentElement, Render, Styled,
     Window,
     base::{TreeEntry, TreeItem, TreeState, dock::PanelEvent, h_flex},
-    component::{
-        Icon, IconName,
-        list::ListItem,
-        menu::{PopupMenu, PopupMenuItem},
-        tree::tree,
-    },
+    component::{ActiveTheme, Icon, IconName, list::ListItem, tree::tree},
     div,
     prelude::{Context, IntoElement},
-    px,
 };
 
 pub struct ExplorerPanel {
@@ -57,21 +51,7 @@ impl gpui_kit::base::dock::Panel for ExplorerPanel {
 
 impl gpui_kit::component::dock::Panel for ExplorerPanel {
     fn title(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        h_flex()
-            .gap_2()
-            .child(Icon::new(IconName::Folder))
-            .child("Files")
-    }
-    fn dropdown_menu(
-        &mut self,
-        menu: PopupMenu,
-        _: &mut Window,
-        _: &mut Context<Self>,
-    ) -> PopupMenu {
-        // TODO: Use actions
-        menu.item(PopupMenuItem::new("Close project").on_click(|_, _, cx| {
-            AppState::close_workspace(cx);
-        }))
+        Icon::new(IconName::Folder)
     }
 }
 
@@ -86,7 +66,7 @@ fn render_item(
     entry: &TreeEntry,
     _selected: bool,
     _window: &mut Window,
-    _cx: &mut App,
+    cx: &mut App,
 ) -> ListItem {
     let item = entry.item();
     let icon = if !entry.is_folder() {
@@ -96,8 +76,22 @@ fn render_item(
     } else {
         Icon::new(IconName::Folder)
     };
-    ListItem::new(ix)
-        .w_full()
-        .pl(px(16.) * entry.depth() + px(12.0))
-        .child(h_flex().gap_2().child(icon).child(item.label.clone()))
+    ListItem::new(ix).w_full().p_0().h_8().child(
+        h_flex()
+            .child(h_flex().children((0..entry.depth()).into_iter().map(|_| {
+                div()
+                    .h_8()
+                    .w_4()
+                    .border_color(cx.theme().secondary)
+                    .border_r_1()
+                    .child("")
+            })))
+            .child(
+                h_flex()
+                    .pl_2()
+                    .gap_2()
+                    .child(icon)
+                    .child(item.label.clone()),
+            ),
+    )
 }
