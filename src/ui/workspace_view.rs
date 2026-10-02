@@ -20,12 +20,15 @@ impl WorkspaceView {
     pub fn new(window: &mut Window, cx: &mut App) -> Option<Entity<Self>> {
         AppState::global(cx).workspace.clone().map(|workspace| {
             let explorer = ExplorerPanel::new(workspace.clone(), cx);
-            let editor = EditorPanel::new(window, cx);
+            let editor1 = EditorPanel::new("File1", window, cx);
+            let editor2 = EditorPanel::new("File2", window, cx);
             cx.new(|cx| {
                 let (dock_area, skin) = DockSkin::dock_area("workspace-view", None, window, cx);
                 dock_area.update(cx, |area, cx| {
                     area.set_center(
-                        DockLayout::tabs().panel_view(panel_handle(editor), cx),
+                        DockLayout::tabs()
+                            .panel_view(panel_handle(editor1), cx)
+                            .panel_view(panel_handle(editor2), cx),
                         window,
                         cx,
                     );
